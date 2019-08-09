@@ -1,18 +1,20 @@
-# FROM
+# Docker - Dockerfile 指令教學
+
+## FROM
 - 基底映像檔，必需是「第一個」指令行，指定這個映像檔要以哪一個Image為基底來建構，格式為 => FROM <image> 或 FROM <image>:<tag>
 
 
-# MAINTAINER
+## MAINTAINER
 - 映像檔維護者，把它想成是作者即可，格式為 => MAINTAINER<name>
 
 
-# LABEL 
+## LABEL 
 - 設定映像檔的Metadata資訊，例如：作者、EMail、映像檔的說明等，格式為 => LABEL <key>=<value> <key>=<value> <key>=<value>
 (description="這是LABEL的範例" version="1.0" owner="我是owner")
 和 MAINTAINER 相比，建議使用 LABEL 來設定會比較方便，另外，如果要查詢 LABEL 的資訊，則可以下 docker inspect 來查詢
 
 
-# USER 
+## USER 
 - 指定運行Container時的用戶名稱或UID，其格式如下：
 (1) USER <user>[:<group>]
 (2) USER <UID>[:<gid>]
@@ -24,7 +26,7 @@ USER tester
 USER 1000
 
 
-# ARG
+## ARG
 - 設定在建置映像檔時可傳入的參數，即定義變數名稱以及變數的預設值，其格式為：
 ARG <name>[=<default value>]
 ARG 和 ENV 的功能類似，都可以設定變數，但是 ARG 設定的值是供建置映像檔時使用(搭配docker build指令)，在Container中是無法使用這些變數的，
@@ -36,7 +38,7 @@ docker build --build-arg Param1=demo -t myimage:v1 .
 在上面的例子中，我們在 docker build 中利用 –build-arg <varname>=<value> 參數將 Param1 的值變更為「demo」，而 Param2 的值並沒有指定，所以保留預設值「somevalue」
 
 
-# WORKDIR
+## WORKDIR
 - 設定工作目錄，其格式如下：
 WORKDIR /path/to/workdir
 - 當設定 WORKDIR 後，Dockerfile 中的 RUN、CMD、ENTRYPOINT、COPY、ADD 等指令就會在該工作目錄下執行，以下是官方的示範：
@@ -47,7 +49,7 @@ RUN pwd
 - 在上面的範例中，pwd 最後會在 /a/b/c 目錄下執行，如果目錄不存在，系統會幫忙自動建立
 
 
-# COPY 
+## COPY 
 - 複製本地端的檔案/目錄到映像檔的指定位置中，其格式為：
 (1) COPY [–chown=<user>:<group>] <src>… <dest> => COPY file1.txt file2.js file3.json ./
 (2) COPY [–chown=<user>:<group>] [“<src>”,… “<dest>”] => COPY ["file1.txt", "file2.js", "file3.json" "./"]
@@ -58,7 +60,7 @@ RUN pwd
 (4) 若目的位置不存在，會自動建立
 
 
-# ADD
+## ADD
 - 和COPY一樣，可將本地端的檔案/目錄複製到映像檔的指定位置內，其格式為：
 (1) ADD [–chown=<user>:<group>] <src>… <dest> => ADD file1.txt file2.js file3.json ./
 (2) ADD [–chown=<user>:<group>] [“<src>”,… “<dest>”] => ADD https://www.google.com/demo.gzip $ENV_DEMO_VALUE
@@ -68,7 +70,7 @@ RUN pwd
 - 除非你有自動解壓的需求，不然一般建議會使用「COPY」來加入檔案！
 
 
-# RUN
+## RUN
 - 執行指定的指令，每加一個RUN，就會在基底映像層加上一層資料層，以此類推，一層一層的建構起我們最後想要的映像檔，例如我們可以利用RUN來安裝套件，其格式分為二種：
 (1) RUN <command>：以shell的形式執行，Linux的預設是/bin/sh -c，而Windows上的預設環境則是cmd /S /C
 (2) RUN ["executable", "param1", "param2"]：以exec的形式執行指令，例如Linux上不想用預設的shell執行指令，
@@ -81,7 +83,7 @@ RUN pwd
 (3) 每一個RUN就會新增一層資料層，為了減少不必要的資料層，可以利用&&來串連多個命令
 
 
-# EXPOSE 
+## EXPOSE 
 - 宣告在映像檔中預設要使用(對外)的連接埠，格式如下：
 (1) EXPOSE <port> [<port>/<protocol>…] => EXPOSE 80/tcp，EXPOSE 80/udp (EXPOSE預設的協定是TCP，但如果不是要TCP的話，可以自行指定)
 - 使用EXPOSE所定義的連接埠並不會自動的啟用，而只是做提示的作用而已，要將連接埠啟用需要在執行 docker run 時，搭配 -p 或 -P 的參數來啟用
@@ -89,7 +91,7 @@ RUN pwd
 大寫的 -P 則會啟用所有EXPOSE所定義的連接埠，並動態(隨機)的關聯到主機的連接埠，例如：EXPOSE 80 可能隨機關聯到主機的 45123 連接埠 => docker run -P demo
 
 
-# ENV 
+## ENV 
 - 設定環境變數，支援二種格式：
 (1) ENV <key> <value>：Key 後面的第一個空白鍵後會視為 Value
 (2) ENV <key>=<value> …：用等於符號來定義，每一組中間以空白鍵隔開，我個人比較喜歡這種形式，不容易搞混 => ENV demoPATH="/var/log" demoVer="1.0"
@@ -97,7 +99,7 @@ RUN pwd
 使用環境變數的例子，有沒有用大括號都可以 COPY debug.log ${demoPATH} 或 ADD $demoFile /foo
 
 
-# VOLUME 
+## VOLUME 
 - 建立本機或來自其他容器的掛載點，指令格式如下：
 VOLUME [“/data”]
 - VOLUME的值可以是JSON的Array格式，也可以是純文字
@@ -108,7 +110,7 @@ VOLUME [“/data”]
 - 要特別注意的是使用 VOLUME 來定義掛載點時，是無法指定本機對應的目錄的，對應到哪個目錄是自動產生，我們可以透過 docker inspect 來查詢目錄資訊
 
 
-# ENTRYPOINT npm start
+## ENTRYPOINT npm start
 - 和CMD一樣，用來設定映像檔啟動Container時要執行的指令，但不同的是，ENTRYPOINT一定會被執行，而不會有像CMD覆蓋的情況發生，支援二種格式：
 (1) ENTRYPOINT [“executable”, “param1”, “param2”]：exec形式，官方推薦此種方式
 (2) ENTRYPOINT command param1 param2：shell的形式
@@ -118,7 +120,7 @@ VOLUME [“/data”]
 (3) 如果想要覆蓋 ENTRYPOINT 的預設值，則在啟動 Container 時，可以加上「–entrypoint」的參數，例如：docker run –entrypoint
 
 
-# CMD npm start
+## CMD npm start
 - 設定映像檔啟動為 Container 時預設要執行的指令，其指令共支援三種格式：
 (1) CMD [“executable”,”param1″,”param2″]：exec形式，官方推薦此種方式
 (2) CMD [“param1″,”param2”]：適用於有定義 ENTRYPOINT 指令的時候，CMD 中的參數會做為 ENTRYPOINT 的預設參數
@@ -129,8 +131,8 @@ VOLUME [“/data”]
 例如：執行 docker run <image id> 時，CMD所定義的指令會被執行，但當執行 docker run <image id> bash 時，
 - Container 就會執行bash，而原本CMD中定義的值就會覆蓋
 
-# ONBUILD ADD
-# ONBUILD RUN
+## ONBUILD ADD
+## ONBUILD RUN
 - 若這個映像檔是作為其他映像檔的基底時，便需要定義 ONBUILD 指令，格式為：
 ONBUILD [INSTRUCTION]
 ONBUILD 後面接的指令在自建的映像檔中不會被執行，只有當這個映像檔是作為其他映像檔的基底時才會被觸發，
@@ -152,7 +154,7 @@ mkdir -p /home/demo/docker
 在目前目錄尋找 Dockerfile 或 dockerfile
 docker build -t myimage:v1 .
 -t：Name and optionally a tag in the ‘name:tag’ format，指定映像檔名稱、標籤
-在上面的範例中，是假設 Dockerfile 在當前目錄下，因此會以.結尾，若是在不同目錄，則可以直接接 Dockerfile 所在目錄或用 -f 來指定 Dockerfile 位置，例如：
+- 在上面的範例中，是假設 Dockerfile 在當前目錄下，因此會以.結尾，若是在不同目錄，則可以直接接 Dockerfile 所在目錄或用 -f 來指定 Dockerfile 位置，例如：
 後面接 Dockerfile 的所在目錄
 docker build -t myimage:v2 ./docker
 docker build -f /path/to/a/Dockerfile -t myimage:v3 .
