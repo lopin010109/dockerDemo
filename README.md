@@ -131,6 +131,7 @@ VOLUME [“/data”]
 例如：執行 docker run <image id> 時，CMD所定義的指令會被執行，但當執行 docker run <image id> bash 時，
 - Container 就會執行bash，而原本CMD中定義的值就會覆蓋
 
+
 ## ONBUILD ADD
 ## ONBUILD RUN
 - 若這個映像檔是作為其他映像檔的基底時，便需要定義 ONBUILD 指令，格式為：
@@ -149,6 +150,7 @@ FROM A-Image
 ADD . /home/tmp
 mkdir -p /home/demo/docker
 
+
 # 如何使用 Dockerfile ?
 - 介紹了那麼多的指令，最終的目的就是利用 Dockerfile 來建立我們自己的映像檔，其指令為 docker build，範例如下：
 在目前目錄尋找 Dockerfile 或 dockerfile
@@ -160,4 +162,3 @@ docker build -t myimage:v2 ./docker
 docker build -f /path/to/a/Dockerfile -t myimage:v3 .
 用 -f 來指定 Dockerfile 的位置時，後面接的目錄(及其子目錄)需要能夠找到 Dockerfile，否則會出現 context 錯誤
 - 小結：Dockerfile裡面的指令也不少，但因篇幅的關係這邊沒有列出所有的指令，但應該也足夠滿足大部分的需求，想要更深入研究的話，建議可以參考官方的文件，但我個人認為最快的學習方法可以自己動手做做看，比較能夠體會每個指令到底有什麼功用
-
